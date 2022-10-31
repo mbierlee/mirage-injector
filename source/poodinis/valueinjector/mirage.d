@@ -7,13 +7,18 @@
 
 module poodinis.valueinjector.mirage;
 
-import poodinis : ValueInjector, DependencyContainer;
+import poodinis : ValueInjector, DependencyContainer, Value, Autowire, existingInstance;
+
+import mirage : ConfigDictionary, mirageLoadConfig = loadConfig;
 
 class MirageValueInjector(Type) : ValueInjector!Type
 {
+    @Autowire
+    private ConfigDictionary config;
+
     public override Type get(string key)
     {
-        throw new Exception("Not yet implemented");
+        return config.get!Type(key);
     }
 }
 
@@ -59,12 +64,62 @@ public void registerMirageInjectors(shared(DependencyContainer) container)
     container.register!(ValueInjector!string, MirageStringValueInjector);
 }
 
+/** 
+ * Load config from disk.
+ * A specific loader will be used based on the file's extension. registerMirageInjectors 
+ * will be called by this function. The loaded ConfigDictionary will be registered and available
+ * for injection by itself too.
+ *
+ * Params:
+ *   container = Dependency container to register config and injectors with.
+ *   configPath = Path to the configuration file.
+ * Throws: ConfigCreationException when the file's extension is unrecognized.
+ */
+public void loadConfig(shared(DependencyContainer) container, const string configPath)
+{
+    container.registerMirageInjectors;
+    auto config = mirageLoadConfig(configPath);
+    container.register!ConfigDictionary.existingInstance(config);
+}
+
 version (unittest)
 {
+
+    class TestClass
+    {
+        @Value("horse.name")
+        public string horseName;
+
+        @Value("horse.children")
+        public uint horseChildCount;
+    }
+
     @("Register primitive value injectors")
     unittest
     {
         auto dependencies = new shared DependencyContainer;
         dependencies.registerMirageInjectors;
+    }
+
+    @("Load config file using generic loader")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.loadConfig("testfiles/horses.ini");
+
+        auto config = dependencies.resolve!ConfigDictionary;
+        assert(config.get("horse.name") == "Breeeeeezer");
+    }
+
+    @("Inject loaded config into class values")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.register!TestClass;
+        dependencies.loadConfig("testfiles/horses.ini");
+
+        auto testClass = dependencies.resolve!TestClass;
+        assert(testClass.horseName == "Breeeeeezer");
+        assert(testClass.horseChildCount == 4);
     }
 }
