@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/poodinis-mirage-config-injector
+poodinis-mirage-config-injector.so
+poodinis-mirage-config-injector.dylib
+poodinis-mirage-config-injector.dll
+poodinis-mirage-config-injector.a
+poodinis-mirage-config-injector.lib
+poodinis-mirage-config-injector-test-*
+*.exe
+*.o
+*.obj
+*.lst
+*.pdb
