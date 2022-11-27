@@ -10,9 +10,9 @@ module poodinis.valueinjector.mirage;
 import poodinis : ValueInjector, DependencyContainer, Value, Autowire, existingInstance;
 
 import mirage : ConfigDictionary, mirageLoadConfig = loadConfig;
-import mirage.json : mirageLoadJsonConfig = loadJsonConfig;
-import mirage.java : mirageLoadJavaConfig = loadJavaConfig;
-import mirage.ini : mirageLoadIniConfig = loadIniConfig;
+import mirage.json : mirageLoadJsonConfig = loadJsonConfig, mirageParseJsonConfig = parseJsonConfig;
+import mirage.java : mirageLoadJavaConfig = loadJavaConfig, mirageParseJavaConfig = parseJavaConfig;
+import mirage.ini : mirageLoadIniConfig = loadIniConfig, mirageParseIniConfig = parseIniConfig;
 
 class MirageValueInjector(Type) : ValueInjector!Type
 {
@@ -80,7 +80,7 @@ public void registerMirageInjectors(shared(DependencyContainer) container)
  */
 public void loadConfig(shared(DependencyContainer) container, const string configPath)
 {
-    loadConfigWithLoader(container, configPath, &mirageLoadConfig);
+    processConfig(container, configPath, &mirageLoadConfig);
 }
 
 /** 
@@ -93,7 +93,7 @@ public void loadConfig(shared(DependencyContainer) container, const string confi
  */
 public void loadJsonConfig(shared(DependencyContainer) container, const string configPath)
 {
-    loadConfigWithLoader(container, configPath, &mirageLoadJsonConfig);
+    processConfig(container, configPath, &mirageLoadJsonConfig);
 }
 
 /** 
@@ -106,7 +106,7 @@ public void loadJsonConfig(shared(DependencyContainer) container, const string c
  */
 public void loadJavaProperties(shared(DependencyContainer) container, const string configPath)
 {
-    loadConfigWithLoader(container, configPath, &mirageLoadJavaConfig);
+    processConfig(container, configPath, &mirageLoadJavaConfig);
 }
 
 /// ditto
@@ -122,17 +122,56 @@ alias loadJavaConfig = loadJavaProperties;
  */
 public void loadIniConfig(shared(DependencyContainer) container, const string configPath)
 {
-    loadConfigWithLoader(container, configPath, &mirageLoadIniConfig);
+    processConfig(container, configPath, &mirageLoadIniConfig);
 }
 
-private void loadConfigWithLoader(
+/** 
+ * Parse JSON config from the given string.
+ *
+ * Params:
+ *   container = Dependency container to register config and injectors with.
+ *   config = Contents of the config to parse.
+ */
+public void parseJsonConfig(shared(DependencyContainer) container, const string config)
+{
+    processConfig(container, config, &mirageParseJsonConfig);
+}
+
+/** 
+ * Parse Java properties from the given string.
+ *
+ * Params:
+ *   container = Dependency container to register config and injectors with.
+ *   config = Contents of the properties to parse.
+ */
+public void parseJavaProperties(shared(DependencyContainer) container, const string properties)
+{
+    processConfig(container, properties, &mirageParseJavaConfig);
+}
+
+/// ditto
+alias parseJavaConfig = parseJavaProperties;
+
+/** 
+ * Parse INI config from the given string.
+ *
+ * Params:
+ *   container = Dependency container to register config and injectors with.
+ *   config = Contents of the config to parse.
+ */
+public void parseIniConfig(shared(DependencyContainer) container, const string config)
+{
+    processConfig(container, config, &mirageParseIniConfig);
+}
+
+private void processConfig(
     shared(DependencyContainer) container,
-    const string configPath,
-    ConfigDictionary function(const string configPath) loaderFunc
+    const string configProcParam,
+    ConfigDictionary function(const string configProcParam) procFunc
 )
 {
     container.registerMirageInjectors;
-    auto config = loaderFunc(configPath);
+    auto config = procFunc(configProcParam);
     container.register!ConfigDictionary.existingInstance(config);
 }
 
@@ -188,6 +227,24 @@ version (unittest)
         assert(testClass.horseName == "Maaarrrilll");
     }
 
+    @("Parse JSON config")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.register!TestClass;
+        dependencies.parseJsonConfig("
+        {
+            \"horse\": {
+                \"name\": \"Stooommmmmyyyy\",
+                \"children\": 56
+            }
+        }
+        ");
+
+        auto testClass = dependencies.resolve!TestClass;
+        assert(testClass.horseName == "Stooommmmmyyyy");
+    }
+
     @("Load Java config")
     unittest
     {
@@ -199,7 +256,20 @@ version (unittest)
         assert(testClass.horseName == "Beaaaaaaan");
     }
 
-    
+    @("Parse Java config")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.register!TestClass;
+        dependencies.parseJavaConfig("
+        horse.name = Bruuuuuhhhhlleeee
+        horse.children = 909
+        ");
+
+        auto testClass = dependencies.resolve!TestClass;
+        assert(testClass.horseName == "Bruuuuuhhhhlleeee");
+    }
+
     @("Load INI config")
     unittest
     {
@@ -210,4 +280,20 @@ version (unittest)
         auto testClass = dependencies.resolve!TestClass;
         assert(testClass.horseName == "Breeeeeezer");
     }
+
+    @("Parse INI config")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.register!TestClass;
+        dependencies.parseIniConfig("
+        [horse]
+        name = \"Raaaammmmmaaaaaah\"
+        children = 34
+        ");
+
+        auto testClass = dependencies.resolve!TestClass;
+        assert(testClass.horseName == "Raaaammmmmaaaaaah");
+    }
+
 }
