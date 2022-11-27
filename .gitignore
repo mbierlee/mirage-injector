@@ -14,3 +14,4 @@ poodinis-mirage-config-injector-test-*
 *.obj
 *.lst
 *.pdb
+/bin/
