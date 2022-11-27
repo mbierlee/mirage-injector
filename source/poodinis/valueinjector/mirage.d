@@ -10,6 +10,9 @@ module poodinis.valueinjector.mirage;
 import poodinis : ValueInjector, DependencyContainer, Value, Autowire, existingInstance;
 
 import mirage : ConfigDictionary, mirageLoadConfig = loadConfig;
+import mirage.json : mirageLoadJsonConfig = loadJsonConfig;
+import mirage.java : mirageLoadJavaConfig = loadJavaConfig;
+import mirage.ini : mirageLoadIniConfig = loadIniConfig;
 
 class MirageValueInjector(Type) : ValueInjector!Type
 {
@@ -77,8 +80,59 @@ public void registerMirageInjectors(shared(DependencyContainer) container)
  */
 public void loadConfig(shared(DependencyContainer) container, const string configPath)
 {
+    loadConfigWithLoader(container, configPath, &mirageLoadConfig);
+}
+
+/** 
+ * Load a JSON config from disk.
+ * registerMirageInjectors will be called by this function. The loaded ConfigDictionary will be
+ * registered and available for injection by itself too.
+ * Params:
+ *   container = Dependency container to register config and injectors with.
+ *   configPath = Path to the configuration file.
+ */
+public void loadJsonConfig(shared(DependencyContainer) container, const string configPath)
+{
+    loadConfigWithLoader(container, configPath, &mirageLoadJsonConfig);
+}
+
+/** 
+ * Load a Java properties from disk.
+ * registerMirageInjectors will be called by this function. The loaded ConfigDictionary will be
+ * registered and available for injection by itself too.
+ * Params:
+ *   container = Dependency container to register config and injectors with.
+ *   configPath = Path to the configuration file.
+ */
+public void loadJavaProperties(shared(DependencyContainer) container, const string configPath)
+{
+    loadConfigWithLoader(container, configPath, &mirageLoadJavaConfig);
+}
+
+/// ditto
+alias loadJavaConfig = loadJavaProperties;
+
+/** 
+ * Load an INI config from disk.
+ * registerMirageInjectors will be called by this function. The loaded ConfigDictionary will be
+ * registered and available for injection by itself too.
+ * Params:
+ *   container = Dependency container to register config and injectors with.
+ *   configPath = Path to the configuration file.
+ */
+public void loadIniConfig(shared(DependencyContainer) container, const string configPath)
+{
+    loadConfigWithLoader(container, configPath, &mirageLoadIniConfig);
+}
+
+private void loadConfigWithLoader(
+    shared(DependencyContainer) container,
+    const string configPath,
+    ConfigDictionary function(const string configPath) loaderFunc
+)
+{
     container.registerMirageInjectors;
-    auto config = mirageLoadConfig(configPath);
+    auto config = loaderFunc(configPath);
     container.register!ConfigDictionary.existingInstance(config);
 }
 
@@ -121,5 +175,39 @@ version (unittest)
         auto testClass = dependencies.resolve!TestClass;
         assert(testClass.horseName == "Breeeeeezer");
         assert(testClass.horseChildCount == 4);
+    }
+
+    @("Load JSON config")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.register!TestClass;
+        dependencies.loadJsonConfig("testfiles/horses.json");
+
+        auto testClass = dependencies.resolve!TestClass;
+        assert(testClass.horseName == "Maaarrrilll");
+    }
+
+    @("Load Java config")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.register!TestClass;
+        dependencies.loadJavaConfig("testfiles/horses.properties");
+
+        auto testClass = dependencies.resolve!TestClass;
+        assert(testClass.horseName == "Beaaaaaaan");
+    }
+
+    
+    @("Load INI config")
+    unittest
+    {
+        auto dependencies = new shared DependencyContainer;
+        dependencies.register!TestClass;
+        dependencies.loadIniConfig("testfiles/horses.ini");
+
+        auto testClass = dependencies.resolve!TestClass;
+        assert(testClass.horseName == "Breeeeeezer");
     }
 }
