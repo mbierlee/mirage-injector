@@ -1,5 +1,5 @@
 {
-  "name": "poodinis-mirage-config-injector",
+  "name": "mirage-injector",
   "description": "A Poodinis value injector for reading config files using Mirage Config",
   "authors": ["Mike Bierlee"],
   "copyright": "Copyright © 2022, Mike Bierlee",
