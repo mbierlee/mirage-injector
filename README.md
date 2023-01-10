@@ -10,7 +10,7 @@ A config value injector for the [Poodinis dependency injection framework](https:
 
 ### DUB Dependency
 
-See the [DUB project page](https://code.dlang.org/packages/poodinis-mirage-config-injector) for instructions on how to include Mirage Config into your project.
+See the [DUB project page](https://code.dlang.org/packages/mirage-injector) for instructions on how to include Mirage Config into your project.
 
 ### Quickstart
 
