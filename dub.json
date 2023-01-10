@@ -2,7 +2,7 @@
   "name": "mirage-injector",
   "description": "A Poodinis value injector for reading config files using Mirage Config",
   "authors": ["Mike Bierlee"],
-  "copyright": "Copyright © 2022, Mike Bierlee",
+  "copyright": "Copyright © 2022-2023, Mike Bierlee",
   "license": "mit",
   "dependencies": {
     "poodinis": "~>8.1.3",
