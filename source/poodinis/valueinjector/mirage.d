@@ -1,8 +1,12 @@
 /**
  * Mirage Config value injector for the Poodinis Dependency Injection Framework
- * Copyright 2022-2023 Mike Bierlee
- * This software is licensed under the terms of the MIT license.
- * The full terms of the license can be found in the LICENSE file.
+ *
+ * Authors:
+ *  Mike Bierlee, m.bierlee@lostmoment.com
+ * Copyright: 2022-2023 Mike Bierlee
+ * License:
+ *  This software is licensed under the terms of the MIT license.
+ *  The full terms of the license can be found in the LICENSE.txt file.
  */
 
 module poodinis.valueinjector.mirage;
