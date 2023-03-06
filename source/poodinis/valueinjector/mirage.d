@@ -23,7 +23,7 @@ class MirageValueInjector(Type) : ValueInjector!Type
     @Autowire
     private ConfigDictionary config;
 
-    public override Type get(string key)
+    public Type get(string key)
     {
         return config.get!Type(key);
     }
