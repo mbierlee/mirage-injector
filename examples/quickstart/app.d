@@ -15,22 +15,19 @@ import poodinis.valueinjector.mirage : loadConfig;
 import std.stdio : writeln;
 import std.conv : to;
 
-class Server
-{
+class Server {
     @Value("server.host")
     private string host;
 
     @Value("server.port")
     private int port;
 
-    public void run()
-    {
+    public void run() {
         writeln("Running server on " ~ host ~ ":" ~ port.to!string);
     }
 }
 
-void main()
-{
+void main() {
     auto container = new shared DependencyContainer();
     container.register!Server;
     container.loadConfig("config.ini");

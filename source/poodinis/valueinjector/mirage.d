@@ -18,13 +18,11 @@ import mirage.json : mirageLoadJsonConfig = loadJsonConfig, mirageParseJsonConfi
 import mirage.java : mirageLoadJavaConfig = loadJavaConfig, mirageParseJavaConfig = parseJavaConfig;
 import mirage.ini : mirageLoadIniConfig = loadIniConfig, mirageParseIniConfig = parseIniConfig;
 
-class MirageValueInjector(Type) : ValueInjector!Type
-{
+class MirageValueInjector(Type) : ValueInjector!Type {
     @Autowire
     private ConfigDictionary config;
 
-    public Type get(string key)
-    {
+    public Type get(string key) {
         return config.get!Type(key);
     }
 }
@@ -51,8 +49,7 @@ alias MirageStringValueInjector = MirageValueInjector!string;
  * Params:
  *   container = Dependency container to register injectors with.
  */
-public void registerMirageInjectors(shared(DependencyContainer) container)
-{
+public void registerMirageInjectors(shared(DependencyContainer) container) {
     container.register!(ValueInjector!bool, MirageBoolValueInjector);
     container.register!(ValueInjector!byte, MirageByteValueInjector);
     container.register!(ValueInjector!ubyte, MirageUbyteValueInjector);
@@ -82,8 +79,7 @@ public void registerMirageInjectors(shared(DependencyContainer) container)
  *   configPath = Path to the configuration file.
  * Throws: ConfigCreationException when the file's extension is unrecognized.
  */
-public void loadConfig(shared(DependencyContainer) container, const string configPath)
-{
+public void loadConfig(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadConfig);
 }
 
@@ -95,8 +91,7 @@ public void loadConfig(shared(DependencyContainer) container, const string confi
  *   container = Dependency container to register config and injectors with.
  *   configPath = Path to the configuration file.
  */
-public void loadJsonConfig(shared(DependencyContainer) container, const string configPath)
-{
+public void loadJsonConfig(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadJsonConfig);
 }
 
@@ -108,8 +103,7 @@ public void loadJsonConfig(shared(DependencyContainer) container, const string c
  *   container = Dependency container to register config and injectors with.
  *   configPath = Path to the configuration file.
  */
-public void loadJavaProperties(shared(DependencyContainer) container, const string configPath)
-{
+public void loadJavaProperties(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadJavaConfig);
 }
 
@@ -124,8 +118,7 @@ alias loadJavaConfig = loadJavaProperties;
  *   container = Dependency container to register config and injectors with.
  *   configPath = Path to the configuration file.
  */
-public void loadIniConfig(shared(DependencyContainer) container, const string configPath)
-{
+public void loadIniConfig(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadIniConfig);
 }
 
@@ -136,8 +129,7 @@ public void loadIniConfig(shared(DependencyContainer) container, const string co
  *   container = Dependency container to register config and injectors with.
  *   config = Contents of the config to parse.
  */
-public void parseJsonConfig(shared(DependencyContainer) container, const string config)
-{
+public void parseJsonConfig(shared(DependencyContainer) container, const string config) {
     processConfig(container, config, &mirageParseJsonConfig);
 }
 
@@ -148,8 +140,7 @@ public void parseJsonConfig(shared(DependencyContainer) container, const string 
  *   container = Dependency container to register config and injectors with.
  *   config = Contents of the properties to parse.
  */
-public void parseJavaProperties(shared(DependencyContainer) container, const string properties)
-{
+public void parseJavaProperties(shared(DependencyContainer) container, const string properties) {
     processConfig(container, properties, &mirageParseJavaConfig);
 }
 
@@ -163,8 +154,7 @@ alias parseJavaConfig = parseJavaProperties;
  *   container = Dependency container to register config and injectors with.
  *   config = Contents of the config to parse.
  */
-public void parseIniConfig(shared(DependencyContainer) container, const string config)
-{
+public void parseIniConfig(shared(DependencyContainer) container, const string config) {
     processConfig(container, config, &mirageParseIniConfig);
 }
 
@@ -172,18 +162,15 @@ private void processConfig(
     shared(DependencyContainer) container,
     const string configProcParam,
     ConfigDictionary function(const string configProcParam) procFunc
-)
-{
+) {
     container.registerMirageInjectors;
     auto config = procFunc(configProcParam);
     container.register!ConfigDictionary.existingInstance(config);
 }
 
-version (unittest)
-{
+version (unittest) {
 
-    class TestClass
-    {
+    class TestClass {
         @Value("horse.name")
         public string horseName;
 
@@ -192,15 +179,13 @@ version (unittest)
     }
 
     @("Register primitive value injectors")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.registerMirageInjectors;
     }
 
     @("Load config file using generic loader")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.loadConfig("testfiles/horses.ini");
 
@@ -209,8 +194,7 @@ version (unittest)
     }
 
     @("Inject loaded config into class values")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.register!TestClass;
         dependencies.loadConfig("testfiles/horses.ini");
@@ -221,8 +205,7 @@ version (unittest)
     }
 
     @("Load JSON config")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.register!TestClass;
         dependencies.loadJsonConfig("testfiles/horses.json");
@@ -232,8 +215,7 @@ version (unittest)
     }
 
     @("Parse JSON config")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.register!TestClass;
         dependencies.parseJsonConfig("
@@ -250,8 +232,7 @@ version (unittest)
     }
 
     @("Load Java config")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.register!TestClass;
         dependencies.loadJavaConfig("testfiles/horses.properties");
@@ -261,8 +242,7 @@ version (unittest)
     }
 
     @("Parse Java config")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.register!TestClass;
         dependencies.parseJavaConfig("
@@ -275,8 +255,7 @@ version (unittest)
     }
 
     @("Load INI config")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.register!TestClass;
         dependencies.loadIniConfig("testfiles/horses.ini");
@@ -286,8 +265,7 @@ version (unittest)
     }
 
     @("Parse INI config")
-    unittest
-    {
+    unittest {
         auto dependencies = new shared DependencyContainer;
         dependencies.register!TestClass;
         dependencies.parseIniConfig("
