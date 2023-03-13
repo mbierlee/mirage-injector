@@ -1,6 +1,6 @@
 # Mirage Config injector for Poodinis Changelog
 
-**Version 2.0.0**
+**Version 2.0.0** (13-03-2023)
 
 - Upgrade to Poodinis 9.0.0
 
