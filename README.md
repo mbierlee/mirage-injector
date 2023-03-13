@@ -8,6 +8,8 @@ Licensed under the terms of the MIT license - See [LICENSE.txt](LICENSE.txt)
 
 A config value injector for the [Poodinis dependency injection framework](https://github.com/mbierlee/poodinis) using [Mirage Config](https://github.com/mbierlee/mirage-config)
 
+Requires at least a D 2.097.2 compatible compiler  
+
 ## Getting started
 
 ### DUB Dependency
