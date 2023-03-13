@@ -1,6 +1,6 @@
 # Mirage Config injector for Poodinis
 
-Version 1.0.2  
+Version 2.0.0  
 Copyright 2022-2023 Mike Bierlee  
 Licensed under the terms of the MIT license - See [LICENSE.txt](LICENSE.txt)
 
