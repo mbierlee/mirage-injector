@@ -4,7 +4,7 @@ Version 2.0.0
 Copyright 2022-2023 Mike Bierlee  
 Licensed under the terms of the MIT license - See [LICENSE.txt](LICENSE.txt)
 
-[![DUB Package](https://img.shields.io/dub/v/mirage-injector.svg)](https://code.dlang.org/packages/mirage-injector)
+[![DUB Package](https://img.shields.io/dub/v/mirage-injector.svg)](https://code.dlang.org/packages/mirage-injector) [![CI](https://github.com/mbierlee/mirage-injector/actions/workflows/dub.yml/badge.svg)](https://github.com/mbierlee/mirage-injector/actions/workflows/dub.yml)
 
 A config value injector for the [Poodinis dependency injection framework](https://github.com/mbierlee/poodinis) using [Mirage Config](https://github.com/mbierlee/mirage-config)
 
