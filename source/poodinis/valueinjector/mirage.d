@@ -22,7 +22,7 @@ class MirageValueInjector(Type) : ValueInjector!Type {
     @Autowire
     private ConfigDictionary config;
 
-    public Type get(string key) {
+    Type get(string key) {
         return config.get!Type(key);
     }
 }
@@ -49,7 +49,7 @@ alias MirageStringValueInjector = MirageValueInjector!string;
  * Params:
  *   container = Dependency container to register injectors with.
  */
-public void registerMirageInjectors(shared(DependencyContainer) container) {
+void registerMirageInjectors(shared(DependencyContainer) container) {
     container.register!(ValueInjector!bool, MirageBoolValueInjector);
     container.register!(ValueInjector!byte, MirageByteValueInjector);
     container.register!(ValueInjector!ubyte, MirageUbyteValueInjector);
@@ -79,7 +79,7 @@ public void registerMirageInjectors(shared(DependencyContainer) container) {
  *   configPath = Path to the configuration file.
  * Throws: ConfigCreationException when the file's extension is unrecognized.
  */
-public void loadConfig(shared(DependencyContainer) container, const string configPath) {
+void loadConfig(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadConfig);
 }
 
@@ -91,7 +91,7 @@ public void loadConfig(shared(DependencyContainer) container, const string confi
  *   container = Dependency container to register config and injectors with.
  *   configPath = Path to the configuration file.
  */
-public void loadJsonConfig(shared(DependencyContainer) container, const string configPath) {
+void loadJsonConfig(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadJsonConfig);
 }
 
@@ -103,7 +103,7 @@ public void loadJsonConfig(shared(DependencyContainer) container, const string c
  *   container = Dependency container to register config and injectors with.
  *   configPath = Path to the configuration file.
  */
-public void loadJavaProperties(shared(DependencyContainer) container, const string configPath) {
+void loadJavaProperties(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadJavaConfig);
 }
 
@@ -118,7 +118,7 @@ alias loadJavaConfig = loadJavaProperties;
  *   container = Dependency container to register config and injectors with.
  *   configPath = Path to the configuration file.
  */
-public void loadIniConfig(shared(DependencyContainer) container, const string configPath) {
+void loadIniConfig(shared(DependencyContainer) container, const string configPath) {
     processConfig(container, configPath, &mirageLoadIniConfig);
 }
 
@@ -129,7 +129,7 @@ public void loadIniConfig(shared(DependencyContainer) container, const string co
  *   container = Dependency container to register config and injectors with.
  *   config = Contents of the config to parse.
  */
-public void parseJsonConfig(shared(DependencyContainer) container, const string config) {
+void parseJsonConfig(shared(DependencyContainer) container, const string config) {
     processConfig(container, config, &mirageParseJsonConfig);
 }
 
@@ -140,7 +140,7 @@ public void parseJsonConfig(shared(DependencyContainer) container, const string 
  *   container = Dependency container to register config and injectors with.
  *   config = Contents of the properties to parse.
  */
-public void parseJavaProperties(shared(DependencyContainer) container, const string properties) {
+void parseJavaProperties(shared(DependencyContainer) container, const string properties) {
     processConfig(container, properties, &mirageParseJavaConfig);
 }
 
@@ -154,7 +154,7 @@ alias parseJavaConfig = parseJavaProperties;
  *   container = Dependency container to register config and injectors with.
  *   config = Contents of the config to parse.
  */
-public void parseIniConfig(shared(DependencyContainer) container, const string config) {
+void parseIniConfig(shared(DependencyContainer) container, const string config) {
     processConfig(container, config, &mirageParseIniConfig);
 }
 
@@ -172,10 +172,10 @@ version (unittest) {
 
     class TestClass {
         @Value("horse.name")
-        public string horseName;
+        string horseName;
 
         @Value("horse.children")
-        public uint horseChildCount;
+        uint horseChildCount;
     }
 
     @("Register primitive value injectors")

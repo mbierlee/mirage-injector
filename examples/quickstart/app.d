@@ -22,7 +22,7 @@ class Server {
     @Value("server.port")
     private int port;
 
-    public void run() {
+    void run() {
         writeln("Running server on " ~ host ~ ":" ~ port.to!string);
     }
 }
